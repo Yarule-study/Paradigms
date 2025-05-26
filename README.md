@@ -1,0 +1,2 @@
+# Paradigms
+Programming Paradigms Comparison
