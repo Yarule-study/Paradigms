@@ -1,7 +1,7 @@
 'use strict';
 
 const point = {
-  create: (x, y) => ({ x, y }),
+  create: (x, y) => Object.freeze({ x, y }),
   move: ({ x, y }, dx, dy) => ({ x: x + dx, y: y + dy }),
   clone: ({ x, y }) => point.create(x, y),
   toString: ({ x, y }) => `(${x}, ${y})`,
