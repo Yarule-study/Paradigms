@@ -2,7 +2,7 @@
 
 const proto = Object.create(null);
 
-const point = (x, y) => {
+const createPoint = (x, y) => {
   const self = Object.create(proto);
   self.x = x;
   self.y = y;
@@ -10,7 +10,7 @@ const point = (x, y) => {
 };
 
 proto.clone = function () {
-  return point(this.x, this.y);
+  return createPoint(this.x, this.y);
 };
 
 proto.move = function (x, y) {
@@ -24,7 +24,7 @@ proto.toString = function () {
 
 // Usage
 
-const p1 = point(10, 20);
+const p1 = createPoint(10, 20);
 console.log(p1.toString());
 const c1 = p1.clone();
 c1.move(-5, 10);
