@@ -25,6 +25,3 @@ console.log(p1.toString());
 const c1 = p1.clone();
 c1.move(-5, 10);
 console.log(c1.toString());
-
-console.log(Point.__proto__);
-console.log(Point.prototype.__proto__);

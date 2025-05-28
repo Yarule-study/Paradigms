@@ -12,24 +12,10 @@ const point = (ax, ay) => {
   return { move, clone, toString };
 };
 
-const line = (a, b) => {
-  let p1 = a.clone();
-  let p2 = b.clone();
-  const move = (dx, dy) => {
-    p1.move(dx, dy);
-    p2.move(dx, dy);
-  };
-  const clone = () => line(p1, p2);
-  const toString = () => `[${p1}, ${p2}]`;
-  return { move, clone, toString };
-};
-
 // Usage
 
 const p1 = point(10, 20);
-const p2 = point(30, 40);
-const l1 = line(p1, p2);
-const l2 = l1.clone();
-l2.move(-50, 50);
-console.log(l1.toString());
-console.log(l2.toString());
+console.log(p1.toString());
+const c1 = p1.clone();
+c1.move(-5, 10);
+console.log(c1.toString());
