@@ -7,16 +7,16 @@ function Point(x, y) {
 
 Point.prototype = Object.create(null);
 
-Point.prototype.clone = function() {
+Point.prototype.clone = function () {
   return new Point(this.x, this.y);
 };
 
-Point.prototype.move = function(x, y) {
+Point.prototype.move = function (x, y) {
   this.x += x;
   this.y += y;
 };
 
-Point.prototype.toString = function() {
+Point.prototype.toString = function () {
   return `(${this.x}, ${this.y})`;
 };
 

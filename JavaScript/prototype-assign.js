@@ -1,15 +1,15 @@
 'use strict';
 
-const clone = function() {
+const clone = function () {
   return new Point(this.x, this.y);
 };
 
-const move = function(x, y) {
+const move = function (x, y) {
   this.x += x;
   this.y += y;
 };
 
-const toString = function() {
+const toString = function () {
   return `(${this.x}, ${this.y})`;
 };
 

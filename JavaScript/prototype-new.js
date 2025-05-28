@@ -9,16 +9,16 @@ function Point(x, y) {
   return self;
 };
 
-proto.clone = function() {
+proto.clone = function () {
   return new Point(this.x, this.y);
 };
 
-proto.move = function(x, y) {
+proto.move = function (x, y) {
   this.x += x;
   this.y += y;
 };
 
-proto.toString = function() {
+proto.toString = function () {
   return `(${this.x}, ${this.y})`;
 };
 
