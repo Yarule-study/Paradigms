@@ -7,7 +7,7 @@ function Point(x, y) {
   self.x = x;
   self.y = y;
   return self;
-};
+}
 
 proto.clone = function () {
   return new Point(this.x, this.y);

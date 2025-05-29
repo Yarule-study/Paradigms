@@ -26,7 +26,6 @@ createPoint(p1, 10, 20);
 const result = {};
 toString(p1, result);
 console.log(result.value);
-
 const c1 = {};
 clone(p1, c1);
 move(c1, -5, 10);
