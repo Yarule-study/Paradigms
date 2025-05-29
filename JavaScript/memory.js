@@ -1,26 +1,26 @@
 'use strict';
 
 const createPoint = (x, y) => {
-  const buffer = new SharedArrayBuffer(8);
+  const SIZE = 8;
+  const buffer = new SharedArrayBuffer(SIZE);
   const view = new Int32Array(buffer);
   view[0] = x;
   view[1] = y;
-  return {
-    move: (dx, dy) => {
-      Atomics.add(view, 0, dx);
-      Atomics.add(view, 1, dy);
-    },
-    clone: () => {
-      const x = Atomics.load(view, 0);
-      const y = Atomics.load(view, 1);
-      return createPoint(x, y);
-    },
-    toString: () => {
-      const x = Atomics.load(view, 0);
-      const y = Atomics.load(view, 1);
-      return `(${x}, ${y})`;
-    },
+  const move = (dx, dy) => {
+    Atomics.add(view, 0, dx);
+    Atomics.add(view, 1, dy);
   };
+  const clone = () => {
+    const x = Atomics.load(view, 0);
+    const y = Atomics.load(view, 1);
+    return createPoint(x, y);
+  };
+  const toString = () => {
+    const x = Atomics.load(view, 0);
+    const y = Atomics.load(view, 1);
+    return `(${x}, ${y})`;
+  };
+  return { move, clone, toString };
 };
 
 // Usage
