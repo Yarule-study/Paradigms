@@ -9,20 +9,21 @@ class Actor {
     this.#state = new Entity(...args);
   }
 
-  async send(message) {
-    this.#queue.push(message);
-    await this.#process();
+  async send({ method, args = [] }) {
+    return new Promise((resolve) => {
+      this.#queue.push({ method, args, resolve });
+      this.#process();
+    });
   }
 
   async #process() {
     if (this.#processing) return;
     this.#processing = true;
     while (this.#queue.length) {
-      const msg = this.#queue.shift();
-      if (this.#state[msg.method]) {
-        const args = msg.args || [];
-        const res = this.#state[msg.method](...args);
-        msg.callback(res);
+      const { method, args, resolve } = this.#queue.shift();
+      if (typeof this.#state[method] === 'function') {
+        const result = this.#state[method](...args);
+        resolve(result);
       }
     }
     this.#processing = false;
@@ -53,16 +54,10 @@ class Point {
 
 const main = async () => {
   const p1 = new Actor(Point, 10, 20);
-  await p1.send({ method: 'toString', callback: (res) => {
-    console.log(res);
-  } });
-  await p1.send({ method: 'clone', callback: async (c1) => {
-    await c1.send({ method: 'move', args: [-5, 10], callback: async () => {
-      await c1.send({ method: 'toString', callback: (res) => {
-        console.log(res);
-      } });
-    } });
-  } });
+  console.log(await p1.send({ method: 'toString' }));
+  const c1 = await p1.send({ method: 'clone' });
+  await c1.send({ method: 'move', args: [-5, 10] });
+  console.log(await c1.send({ method: 'toString' }));
 };
 
 main();

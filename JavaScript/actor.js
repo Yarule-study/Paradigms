@@ -25,18 +25,20 @@ class Point {
   }
 
   async send(message) {
-    this.#queue.push(message);
-    await this.#process();
+    return new Promise((resolve) => {
+      this.#queue.push({ ...message, resolve });
+      this.#process();
+    });
   }
 
   async #process() {
     if (this.#processing) return;
     this.#processing = true;
     while (this.#queue.length) {
-      const msg = this.#queue.shift();
-      if (msg.method === 'move') msg.callback(this.#move(msg.x, msg.y));
-      if (msg.method === 'clone') msg.callback(this.#clone());
-      if (msg.method === 'toString') msg.callback(this.#toString());
+      const { method, x, y, resolve } = this.#queue.shift();
+      if (method === 'move') resolve(this.#move(x, y));
+      if (method === 'clone') resolve(this.#clone());
+      if (method === 'toString') resolve(this.#toString());
     }
     this.#processing = false;
   }
@@ -46,16 +48,10 @@ class Point {
 
 const main = async () => {
   const p1 = new Point(10, 20);
-  await p1.send({ method: 'toString', callback: (res) => {
-    console.log(res);
-  } });
-  await p1.send({ method: 'clone', callback: async (c1) => {
-    await c1.send({ method: 'move', x: -5, y: 10, callback: async () => {
-      await c1.send({ method: 'toString', callback: (res) => {
-        console.log(res);
-      } });
-    } });
-  } });
+  console.log(await p1.send({ method: 'toString' }));
+  const c1 = await p1.send({ method: 'clone' });
+  await c1.send({ method: 'move', x: -5, y: 10 });
+  console.log(await c1.send({ method: 'toString' }));
 };
 
 main();
