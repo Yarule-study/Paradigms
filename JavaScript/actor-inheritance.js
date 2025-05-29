@@ -3,11 +3,6 @@
 class Actor {
   #queue = [];
   #processing = false;
-  #state = null;
-
-  constructor(Entity, ...args) {
-    this.#state = new Entity(...args);
-  }
 
   async send({ method, args = [] }) {
     return new Promise((resolve) => {
@@ -21,8 +16,8 @@ class Actor {
     this.#processing = true;
     while (this.#queue.length) {
       const { method, args, resolve } = this.#queue.shift();
-      if (typeof this.#state[method] === 'function') {
-        const result = await this.#state[method](...args);
+      if (typeof this[method] === 'function') {
+        const result = await this[method](...args);
         resolve(result);
       }
     }
@@ -30,30 +25,34 @@ class Actor {
   }
 }
 
-class Point {
+class Point extends Actor {
+  #x;
+  #y;
+
   constructor(x, y) {
-    this.x = x;
-    this.y = y;
+    super();
+    this.#x = x;
+    this.#y = y;
   }
 
   move(x, y) {
-    this.x += x;
-    this.y += y;
+    this.#x += x;
+    this.#y += y;
   }
 
   clone() {
-    return new Actor(Point, this.x, this.y);
+    return new Point(this.#x, this.#y);
   }
 
   toString() {
-    return `(${this.x}, ${this.y})`;
+    return `(${this.#x}, ${this.#y})`;
   }
 }
 
 // Usage
 
 const main = async () => {
-  const p1 = new Actor(Point, 10, 20);
+  const p1 = new Point(10, 20);
   console.log(await p1.send({ method: 'toString' }));
   const c1 = await p1.send({ method: 'clone' });
   await c1.send({ method: 'move', args: [-5, 10] });
