@@ -1,27 +1,35 @@
 'use strict';
 
-function Point(x, y) {
-  const value = Object.freeze({ x, y });
-  const self = Object.create(null);
-  self.map = (fn) => fn(self);
-  self.chain = (fn) => fn(self);
-  self.move = (dx, dy) => new Point(x + dx, y + dy);
-  self.clone = () => new Point(x, y);
-  self.toString = (fn) => fn(`(${x}, ${y})`);
-  return self;
+function Point({ x, y }) {
+  const map = (fn) => {
+    const coord = fn({ x, y });
+    return new Point({ x: coord.x, y: coord.y });
+  };
+  const chain = (fn) => fn({ x, y });
+  return { map, chain };
 }
 
-Point.of = (x, y) => new Point(x, y);
+Point.of = ({ x, y }) => new Point({ x, y });
 
 function PointTransform(fn) {
-  return { ap: (point) => point.map(fn) };
+  const ap = (point) => point.map(fn);
+  return { ap };
 }
+
+function Serialized(data) {
+  const map = (fn) => fn(data);
+  return { map };
+}
+
+const move = (d) => ({ x, y }) => ({ x: x + d.x, y: y + d.y });
+const clone = ({ x, y }) => ({ x, y });
+const toString = ({ x, y }) => new Serialized(`(${x}, ${y})`);
 
 // Usage
 
-const p1 = Point.of(10, 20);
-p1.toString(console.log);
-const c0 = p1.map((p) => p.clone());
-const t1 = new PointTransform((p) => p.move(-5, 10));
+const p1 = Point.of({ x: 10, y: 20 });
+p1.chain(toString).map(console.log);
+const c0 = p1.map(clone);
+const t1 = new PointTransform(move({ x: -5, y: 10 }));
 const c1 = t1.ap(c0);
-c1.toString(console.log);
+c1.chain(toString).map(console.log);
