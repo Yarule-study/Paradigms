@@ -1,15 +1,15 @@
 'use strict';
 
-const createPoint = (x) => (y) => Object.freeze({ x, y });
-const move = ({ x, y }) => (dx) => (dy) => createPoint(x + dx)(y + dy);
-const clone = ({ x, y }) => createPoint(x)(y);
-const toString = ({ x, y }) => `(${x}, ${y})`;
+const createPoint = (x) => (y) => ({ map: (f) => f(x)(y) });
+const move = (dx) => (dy) => (x) => (y) => createPoint(x + dx)(y + dy);
+const clone = createPoint;
+const toString = (x) => (y) => `(${x}, ${y})`;
 
 // Usage
 
 const p1 = createPoint(10)(20);
-console.log(toString(p1));
-const c0 = clone(p1);
-console.log(toString(c0));
-const c1 = move(p1)(-5)(10);
-console.log(toString(c1));
+console.log(p1.map(toString));
+const c0 = p1.map(clone);
+console.log(c0.map(toString));
+const c1 = p1.map(move(-5)(10));
+console.log(c1.map(toString));
