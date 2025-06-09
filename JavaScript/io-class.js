@@ -1,24 +1,26 @@
 'use strict';
 
 class IO {
+  #effect;
+
   constructor(effect) {
-    this.effect = effect;
+    this.#effect = effect;
   }
 
-  static of(value) {
-    return new IO(() => value);
+  static of(effect) {
+    return new IO(effect);
   }
 
   map(fn) {
-    return new IO(() => fn(this.effect()));
+    return new IO(() => fn(this.#effect()));
   }
 
   chain(fn) {
-    return new IO(() => fn(this.effect()).run());
+    return new IO(() => fn(this.#effect()).run());
   }
 
   run() {
-    return this.effect();
+    return this.#effect();
   }
 }
 
@@ -57,24 +59,13 @@ class PointTransform {
 
 const move = (dx, dy) => (x, y) => ({ x: x + dx, y: y + dy });
 const clone = (x, y) => ({ x, y });
-const toString = (x, y) => IO.of(`(${x}, ${y})`);
+const toString = (x, y) => IO.of(() => `(${x}, ${y})`);
 
 // Usage
 
 const p1 = Point.of(10, 20);
-
-const sequence1 = p1.chain(toString).map((s) => {
-  console.log(s);
-  return s;
-});
-sequence1.run();
-
+p1.chain(toString).map(console.log).run();
 const c0 = p1.map(clone);
 const t1 = new PointTransform(move(-5, 10));
 const c1 = t1.ap(c0);
-
-const sequence2 = c1.chain(toString).map((s) => {
-  console.log(s);
-  return s;
-});
-sequence2.run();
+c1.chain(toString).map(console.log).run();
