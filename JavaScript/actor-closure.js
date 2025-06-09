@@ -5,13 +5,6 @@ const createActor = (Entity, ...args) => {
   let processing = false;
   const state = new Entity(...args);
 
-  const send = async ({ method, args = [] }) => {
-    return new Promise((resolve) => {
-      queue.push({ method, args, resolve });
-      process();
-    });
-  };
-
   const process = async () => {
     if (processing) return;
     processing = true;
@@ -24,6 +17,12 @@ const createActor = (Entity, ...args) => {
     }
     processing = false;
   };
+
+  const send = async ({ method, args = [] }) => new Promise((resolve) => {
+    queue.push({ method, args, resolve });
+    process();
+  });
+
   return { send, process };
 };
 
